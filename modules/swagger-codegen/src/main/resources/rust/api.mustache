@@ -83,11 +83,16 @@ impl<C: hyper::client::Connect>{{classname}} for {{classname}}Client<C> {
 {{/authMethods}}
 {{/hasAuthMethods}}
         let method = hyper::Method::{{httpMethod}};
-
         let query_string = {
             let mut query = ::url::form_urlencoded::Serializer::new(String::new());
 {{#queryParams}}
-            query.append_pair("{{baseName}}", &{{paramName}}{{#isListContainer}}.join(","){{/isListContainer}}.to_string());
+{{#isListContainer}}
+            let gentle_caress : Vec<String> = {{paramName}}.into_iter().map(|x| x.to_string()).collect();
+            query.append_pair("{{baseName}}", &gentle_caress.join(",").to_string());
+{{/isListContainer}}
+{{^isListContainer}}
+			query.append_pair("{{baseName}}", &{{paramName}}.to_string());
+{{/isListContainer}}
 {{/queryParams}}
 {{#hasAuthMethods}}
             for (key, val) in &auth_query {
